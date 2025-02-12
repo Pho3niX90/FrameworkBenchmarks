@@ -2,20 +2,12 @@ import express from 'ultimate-express';
 import { LRUCache } from 'lru-cache';
 import cluster, { isWorker } from 'node:cluster';
 import { maxQuery, maxRows } from './config.js';
-import fjs from 'fast-json-stringify';
+import { sjs, attr } from 'slow-json-stringify';
 
 const { DATABASE } = process.env;
 const db = DATABASE ? await import(`./database/${DATABASE}.js`) : null;
 
-const jsonSerializer = fjs({
-  type: 'object',
-  properties: {
-    message: {
-      type: 'string',
-      format: 'unsafe',
-    }
-  }
-});
+const jsonSerializer = sjs({ message: attr("string") }); 
 
 const generateRandomNumber = () => Math.floor(Math.random() * maxRows) + 1;
 
